@@ -1,0 +1,39 @@
+From 2850032d9e442f77cec9e6ebac90ac09bd645db8 Mon Sep 17 00:00:00 2001
+From: eroen <eroen@occam.eroen.eu>
+Date: Sun, 26 May 2013 10:36:17 +0200
+Subject: [PATCH 1/2] libc++ fixes: avcodec/avformat workaround
+
+With libc++, string includes stdint.h, which breaks the fragile avformat.h
+workaround, which depends on __STDC_CONSTANT_MACROS being defined before
+stdint.h is included.
+
+Moving the string inclusion after that eyesore shouldn't break anything.
+---
+ apps/openmw/mwsound/ffmpeg_decoder.hpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/apps/openmw/mwsound/ffmpeg_decoder.hpp b/apps/openmw/mwsound/ffmpeg_decoder.hpp
+index 32b2797..a5e5b50 100644
+--- a/apps/openmw/mwsound/ffmpeg_decoder.hpp
++++ b/apps/openmw/mwsound/ffmpeg_decoder.hpp
+@@ -1,8 +1,6 @@
+ #ifndef GAME_SOUND_FFMPEG_DECODER_H
+ #define GAME_SOUND_FFMPEG_DECODER_H
+ 
+-#include <string>
+-
+ // FIXME: This can't be right? The headers refuse to build without UINT64_C,
+ // which only gets defined in stdint.h in either C99 mode or with this macro
+ // defined...
+@@ -14,6 +12,8 @@ extern "C"
+ #include <libavformat/avformat.h>
+ }
+ 
++#include <string>
++
+ #include "sound_decoder.hpp"
+ 
+ 
+-- 
+1.8.2.1
+

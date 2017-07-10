@@ -1,0 +1,25 @@
+From eec9aef39cc2380eda93b58d4a9b4e0a01d96a58 Mon Sep 17 00:00:00 2001
+From: eroen <eroen@occam.eroen.eu>
+Date: Mon, 18 Feb 2013 06:51:22 +0100
+Subject: [PATCH 1/2] fix BINDIR
+
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 577b6f6..e02520d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -647,7 +647,7 @@ endif (APPLE)
+ if (NOT WIN32 AND NOT DPKG_PROGRAM AND NOT APPLE)
+     ## Non Debian based Linux building
+     # paths
+-    set(BINDIR "${CMAKE_INSTALL_PREFIX}/usr/bin" CACHE PATH "Where to install binaries")
++    set(BINDIR "${CMAKE_INSTALL_PREFIX}/bin" CACHE PATH "Where to install binaries")
+     set(DATAROOTDIR "${CMAKE_INSTALL_PREFIX}/share" CACHE PATH "Sets the root of data directories to a non-default location")
+     set(DATADIR "${DATAROOTDIR}/openmw" CACHE PATH "Sets the openmw data directories to a non-default location")
+     set(DOCDIR "${DATAROOTDIR}/doc/openmw" CACHE PATH "Sets the doc directory to a non-default location.")
+-- 
+1.8.1.2
+

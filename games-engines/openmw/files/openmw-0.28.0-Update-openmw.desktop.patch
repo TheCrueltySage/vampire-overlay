@@ -1,0 +1,21 @@
+commit e638b8b8cbeb5bdbc57cb01ba8526f426d3ef70b
+Author: nobrakal <nobrakal@gmail.com>
+Date:   Thu Jan 16 08:44:56 2014 +0100
+
+    Update openmw.desktop
+    
+    Fix bad output of desktop-file-validate for openmw.dektop
+
+diff --git a/files/openmw.desktop b/files/openmw.desktop
+index 3e26018..4a3a76f 100644
+--- a/files/openmw.desktop
++++ b/files/openmw.desktop
+@@ -3,7 +3,7 @@ Type=Application
+ Name=OpenMW Launcher
+ GenericName=Role Playing Game
+ Comment=An engine replacement for The Elder Scrolls III: Morrowind
+-Keywords=Morrowind;Reimplementation Mods;esm;bsa
++Keywords=Morrowind;Reimplementation Mods;esm;bsa;
+ TryExec=omwlauncher
+ Exec=omwlauncher
+ Icon=openmw

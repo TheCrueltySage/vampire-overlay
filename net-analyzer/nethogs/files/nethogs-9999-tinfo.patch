@@ -1,0 +1,46 @@
+From 01c61290a30ae40a358ed803190c21d0dd42dc3a Mon Sep 17 00:00:00 2001
+From: Justin Lecher <jlec@gentoo.org>
+Date: Thu, 24 Jul 2014 12:13:06 +0200
+Subject: [PATCH] Allow to specify ncurses libs at buildtime
+
+If the system is using libtinfo then you need ot link against libncurses and libtinfo.
+With this patch it is possible to specify this at buildtime.
+
+Signed-off-by: Justin Lecher <jlec@gentoo.org>
+---
+ Makefile | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 83b1c3e..3c0e7c7 100644
+--- a/Makefile
++++ b/Makefile
+@@ -20,6 +20,9 @@ CFLAGS?=-Wall -Wextra
+ CXXFLAGS?=-Wall -Wextra
+ 
+ OBJS=packet.o connection.o process.o refresh.o decpcap.o cui.o inode2prog.o conninode.o devices.o
++
++NCURSES_LIBS?=-lncurses
++
+ .PHONY: tgz
+ 
+ tgz: clean
+@@ -36,12 +39,12 @@ install: nethogs nethogs.8
+ 	install -m 644 nethogs.8 $(DESTDIR)$(man8)
+ 
+ test: test.cpp 
+-	$(CXX) $(CXXFLAGS) $(LDFLAGS) test.cpp -o test -lpcap -lm -lncurses -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -DMINORVERSION=\"$(MINORVERSION)\"
++	$(CXX) $(CXXFLAGS) $(LDFLAGS) test.cpp -o test -lpcap -lm ${NCURSES_LIBS} -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -DMINORVERSION=\"$(MINORVERSION)\"
+ 
+ nethogs: main.cpp nethogs.cpp $(OBJS)
+-	$(CXX) $(CXXFLAGS) $(LDFLAGS) main.cpp $(OBJS) -o nethogs -lpcap -lm -lncurses -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -DMINORVERSION=\"$(MINORVERSION)\"
++	$(CXX) $(CXXFLAGS) $(LDFLAGS) main.cpp $(OBJS) -o nethogs -lpcap -lm ${NCURSES_LIBS} -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -DMINORVERSION=\"$(MINORVERSION)\"
+ nethogs_testsum: nethogs_testsum.cpp $(OBJS)
+-	$(CXX) $(CXXFLAGS) $(LDFLAGS) nethogs_testsum.cpp $(OBJS) -o nethogs_testsum -lpcap -lm -lncurses -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -DMINORVERSION=\"$(MINORVERSION)\"
++	$(CXX) $(CXXFLAGS) $(LDFLAGS) nethogs_testsum.cpp $(OBJS) -o nethogs_testsum -lpcap -lm ${NCURSES_LIBS} -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -DMINORVERSION=\"$(MINORVERSION)\"
+ 
+ decpcap_test: decpcap_test.cpp decpcap.o
+ 	$(CXX) $(CXXFLAGS) $(LDFLAGS) decpcap_test.cpp decpcap.o -o decpcap_test -lpcap -lm
+-- 
+2.0.2
+
