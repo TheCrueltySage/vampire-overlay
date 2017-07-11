@@ -90,6 +90,7 @@ src_configure() {
 		-DGTK3_API=TRUE
 		-DPLUGIN_DIR="/usr/$(get_libdir)/${PN}"
 		# wxGTK must be built against same sdl version
+		-DSDL2_API=TRUE
 		-DWX28_API=FALSE
 	)
 
