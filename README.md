@@ -9,4 +9,3 @@ Notable changed ebuilds:
 -----------------------
 - **PCSX2** - builds it with GTK3.
 - **Goldendict** - builds it from Qt5 branch and adds a ton of translations as USE flags.
-- **OpenSceneGraph** - pulls 3.5.5 branch directly from git.

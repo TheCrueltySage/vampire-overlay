@@ -1,10 +1,10 @@
-# $Header: $
+# Copyright 1999-2018 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
 EAPI=5
 
 PYTHON_COMPAT=( python2_7 )
 
-inherit git-r3 eutils
-inherit python-single-r1
+inherit git-r3 eutils python-single-r1
 
 DESCRIPTION="*booru style image collector and viewer"
 HOMEPAGE="http://hydrusnetwork.github.io/hydrus/ https://github.com/hydrusnetwork/hydrus"
@@ -21,8 +21,7 @@ RDEPEND="
 	dev-python/flvlib[${PYTHON_USEDEP}]
 	dev-python/hsaudiotag[${PYTHON_USEDEP}]
 
-	dev-python/twisted-core[${PYTHON_USEDEP}]
-	dev-python/twisted-web[${PYTHON_USEDEP}]
+	dev-python/twisted[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
 	dev-python/PyPDF2[${PYTHON_USEDEP}]
 	dev-python/beautifulsoup[${PYTHON_USEDEP}]
@@ -34,7 +33,6 @@ RDEPEND="
 	dev-python/pycrypto[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	dev-python/PySocks[${PYTHON_USEDEP}]
-	dev-python/twisted-web[${PYTHON_USEDEP}]
 	dev-python/wxpython:3.0[${PYTHON_USEDEP}]
 	dev-python/psutil[${PYTHON_USEDEP}]
 	dev-python/send2trash[${PYTHON_USEDEP}]

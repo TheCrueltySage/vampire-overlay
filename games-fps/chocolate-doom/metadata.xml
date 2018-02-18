@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer><email>maintainer-wanted@gentoo.org</email></maintainer>
+	<longdescription lang="en">
+		Chocolate Doom is a Doom source port which aims to reproduce the
+		behaviour of 'Vanilla' Doom as closely as possible.
+	</longdescription>
+	<use>
+		<flag name='server'>Enable installation of server</flag>
+		<flag name='doom'>Install chocolate-doom executable</flag>
+		<flag name='heretic'>Install chocolate-heretic executable</flag>
+		<flag name='hexen'>Install chocolate-hexen executable</flag>
+		<flag name='strife'>Install chocolate-strife executable</flag>
+	</use>
+</pkgmetadata>
+
