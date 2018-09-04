@@ -2,8 +2,8 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
-PYTHON_COMPAT=( python{2_7,3_4,3_5} pypy )
+EAPI=6
+PYTHON_COMPAT=( python{2_7,3_4,3_5,3_6,3_7} pypy )
 
 inherit distutils-r1 git-r3
 

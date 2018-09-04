@@ -1,10 +1,11 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=2
+EAPI=6
 
-inherit games git-r3
+PYTHON_COMPAT=( python2_7 )
+inherit python-any-r1 scons-utils eutils git-r3
 
 DESCRIPTION="An open source implementation of the RealLive virtual machine for Linux and OSX"
 HOMEPAGE="http://www.elliotglaysher.org/rlvm/"
@@ -26,25 +27,24 @@ RDEPEND="media-libs/libsdl[opengl]
 	>=dev-games/guichan-0.8[opengl,sdl]
 	x11-libs/gtk+:2"
 
-DEPEND="${RDEPEND}
-	dev-util/scons"
+DEPEND="${RDEPEND}"
 
 src_prepare() {
+	epatch "${FILESDIR}/${PN}-freetype.patch"
 	# custom flag goodness
 	epatch "${FILESDIR}/${PN}-custom-flags.patch"
+	default
 }
 
 src_compile() {
-	scons --release \
+	escons --release \
 	CFLAGS="${CFLAGS}" \
 	LDFLAGS="${LDFLAGS}" \
 	|| die "build failed"
 }
 
 src_install() {
-	dogamesbin "build/${PN}" || die "dobin failed"
-	dodoc {AUTHORS,NEWS,README,STATUS}.TXT
+	dobin "build/${PN}" || die "dobin failed"
+	dodoc {AUTHORS,NEWS,STATUS}.TXT README.md
 	doman debian/${PN}.6
-
-	prepgamesdirs
 }
