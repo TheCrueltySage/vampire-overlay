@@ -3,10 +3,10 @@
 
 EAPI=6
 inherit eutils flag-o-matic linux-info multilib systemd user \
-	autotools git-r3
+	meson git-r3
 
 DESCRIPTION="The Music Player Daemon (mpd)"
-HOMEPAGE="http://www.musicpd.org"
+HOMEPAGE="http://www.musicpd.org https://github.com/MusicPlayerDaemon/MPD"
 EGIT_REPO_URI="https://github.com/MusicPlayerDaemon/MPD.git"
 
 LICENSE="GPL-2"
@@ -97,6 +97,10 @@ RDEPEND="${CDEPEND}
 	selinux? ( sec-policy/selinux-mpd )
 "
 
+meson_enable() {
+	usex "$1" "-D${2-$1}=enabled" "-D${2-$1}=disabled"
+}
+
 pkg_setup() {
 	use network || ewarn "Icecast and Shoutcast streaming needs networking."
 	use fluidsynth && ewarn "Using fluidsynth is discouraged by upstream."
@@ -124,111 +128,122 @@ pkg_setup() {
 }
 
 src_prepare() {
-
 	cp -f doc/mpdconf.example doc/mpdconf.dist || die "cp failed"
 	default
-	eautoreconf
 }
 
 src_configure() {
-	local myeconfargs=(
-		--enable-database --disable-roar --disable-documentation
-		--enable-dsd --enable-largefile --disable-osx --disable-shine-encoder
-		--disable-solaris-output --enable-tcp --enable-un --disable-werror
-		--docdir="${EPREFIX}"/usr/share/doc/${PF}
+	local emesonargs=(
+		-Ddatabase=true
+		-Droar=disabled
+		-Ddocumentation=false
+		-Ddsd=true
+		-Dshine=disabled
+		-Dsolaris_output=disabled
+		-Dtcp=true
 	)
 
 	if use network; then
-		myeconfargs+=(
-			--enable-shout
-			$(use_enable vorbis vorbis-encoder)
-			--enable-httpd-output
-			$(use_enable lame lame-encoder)
-			$(use_enable twolame twolame-encoder)
-			$(use_enable audiofile wave-encoder)
+		emesonargs+=(
+			-Dshout=enabled
+			$(meson_enable vorbis vorbisenc)
+			-Dhttpd=true
+			$(meson_enable lame)
+			$(meson_enable twolame)
+			$(meson_use audiofile wave_encoder)
 		)
 	else
-		myeconfargs+=(
-			--disable-shout
-			--disable-vorbis-encoder
-			--disable-httpd-output
-			--disable-lame-encoder
-			--disable-twolame-encoder
-			--disable-wave-encoder
+		emesonargs+=(
+			-Dshout=disabled
+			-Dvorbisenc=disabled
+			-Dhttpd=false
+			-Dlame=disabled
+			-Dtwolame=disabled
+			-Dwave_encoder=false
 		)
 	fi
 
 	if use samba || use upnp; then
-		myeconfargs+=( --enable-neighbor-plugins )
+		emesonargs+=( -Dneighbor=true )
+	else
+		emesonargs+=( -Dneighbor=false )
 	fi
 
 	append-lfs-flags
 	append-ldflags "-L/usr/$(get_libdir)/sidplay/builders"
 
-	myeconfargs+=(
-		$(use_enable eventfd)
-		$(use_enable signalfd)
-		$(use_enable libmpdclient)
-		$(use_enable expat)
-		$(use_enable upnp)
-		$(use_enable adplug)
-		$(use_enable alsa)
-		$(use_enable ao)
-		$(use_enable audiofile)
-		$(use_enable zlib)
-		$(use_enable bzip2)
-		$(use_enable cdio cdio-paranoia)
-		$(use_enable curl)
-		$(use_enable samba smbclient)
-		$(use_enable nfs)
-		$(use_enable debug)
-		$(use_enable ffmpeg)
-		$(use_enable fifo)
-		$(use_enable flac)
-		$(use_enable fluidsynth)
-		$(use_enable gme)
-		$(use_enable id3tag id3)
-		$(use_enable inotify)
-		$(use_enable ipv6)
-		$(use_enable cdio iso9660)
-		$(use_enable jack)
-		$(use_enable soundcloud)
-		$(use_enable tcpd libwrap)
-		$(use_enable libsamplerate lsr)
-		$(use_enable libsoxr soxr)
-		$(use_enable mad)
-		$(use_enable mikmod)
-		$(use_enable mms)
-		$(use_enable modplug)
-		$(use_enable musepack mpc)
-		$(use_enable mpg123)
-		$(use_enable openal)
-		$(use_enable opus)
-		$(use_enable oss)
-		$(use_enable pipe pipe-output)
-		$(use_enable pulseaudio pulse)
-		$(use_enable recorder recorder-output)
-		$(use_enable sid sidplay)
-		$(use_enable sndfile sndfile)
-		$(use_enable sqlite)
-		$(use_enable systemd systemd_daemon)
-		$(use_enable vorbis)
-		$(use_enable wavpack)
-		$(use_enable wildmidi)
-		$(use_enable zip zzip)
-		$(use_enable icu)
-		$(use_enable webdav)
-		$(use_enable faad aac)
-		$(use_with zeroconf zeroconf avahi)
-		--with-systemdsystemunitdir=$(systemd_get_systemunitdir)
-		--with-systemduserunitdir=$(systemd_get_userunitdir)
+	emesonargs+=(
+		$(meson_use eventfd)
+		$(meson_use signalfd)
+		$(meson_enable libmpdclient)
+		$(meson_enable expat)
+		$(meson_enable upnp)
+		$(meson_enable adplug)
+		$(meson_enable alsa)
+		$(meson_enable ao)
+		$(meson_enable audiofile)
+		$(meson_enable zlib)
+		$(meson_enable bzip2)
+		$(meson_enable cdio cdio_paranoia)
+		$(meson_enable curl)
+		$(meson_enable samba smbclient)
+		$(meson_enable nfs)
+		$(usex debug --buildtype=debug --buildtype=plain)
+		$(meson_enable ffmpeg)
+		$(meson_use fifo)
+		$(meson_enable flac)
+		$(meson_enable fluidsynth)
+		$(meson_enable gme)
+		$(meson_enable id3tag)
+		$(meson_use inotify)
+		$(meson_enable ipv6)
+		$(meson_enable cdio iso9660)
+		$(meson_enable jack)
+		$(meson_enable soundcloud)
+		$(meson_enable tcpd libwrap)
+		$(meson_enable libsamplerate)
+		$(meson_enable libsoxr soxr)
+		$(meson_enable mad)
+		$(meson_enable mikmod)
+		$(meson_enable mms)
+		$(meson_enable modplug)
+		$(meson_enable musepack mpcdec)
+		$(meson_enable mpg123)
+		$(meson_enable openal)
+		$(meson_enable opus)
+		$(meson_enable oss)
+		$(meson_use pipe pipe)
+		$(meson_enable pulseaudio pulse)
+		$(meson_use recorder)
+		$(meson_enable sid sidplay)
+		$(meson_enable sndfile)
+		$(meson_enable sqlite)
+		$(meson_enable systemd)
+		$(meson_enable vorbis)
+		$(meson_enable wavpack)
+		$(meson_enable wildmidi)
+		$(meson_enable zip zzip)
+		$(meson_enable icu)
+		$(meson_enable webdav)
+		$(meson_enable faad)
+		$(usex zeroconf -Dzeroconf=avahi -Dzeroconf=disabled)
+		-Dsystemd_system_unit_dir=$(systemd_get_systemunitdir)
+		-Dsystemd_user_unit_dir=$(systemd_get_userunitdir)
 	)
 
-	econf "${myeconfargs[@]}"
+	meson_src_configure
+}
+
+src_compile() {
+	meson_src_compile
+}
+
+src_test() {
+	meson_src_test
 }
 
 src_install() {
-	emake DESTDIR="${D}" install
+	meson_src_install
 
 	insinto /etc
 	newins doc/mpdconf.dist mpd.conf
