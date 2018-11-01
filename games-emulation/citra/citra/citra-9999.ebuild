@@ -8,7 +8,7 @@ inherit cmake-utils git-r3 flag-o-matic gnome2-utils
 DESCRIPTION="Nintendo 3DS Emulator"
 HOMEPAGE="https://citra-emu.org/"
 EGIT_REPO_URI="https://github.com/citra-emu/citra.git"
-EGIT_SUBMODULES=( '*' '-externals/*' 'externals/libzmq' 'externals/cppzmq' )
+EGIT_SUBMODULES=( '*' '-externals/*' 'externals/libzmq' 'externals/cppzmq' '-opt/*' '-json' )
 
 LICENSE="GPL-2"
 SLOT="0"

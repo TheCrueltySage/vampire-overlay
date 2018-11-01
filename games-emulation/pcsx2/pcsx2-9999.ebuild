@@ -2,17 +2,13 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
-PLOCALES="ar_SA ca_ES cs_CZ de_DE es_ES fi_FI fr_FR hr_HR hu_HU id_ID it_IT ja_JP ko_KR ms_MY nb_NO pl_PL pt_BR ru_RU sv_SE th_TH tr_TR zh_CN zh_TW"
+EAPI=6
 
-inherit cmake-utils eutils git-r3 l10n multilib toolchain-funcs wxwidgets
+inherit cmake-utils eutils git-r3 multilib toolchain-funcs wxwidgets
 
 DESCRIPTION="A PlayStation 2 emulator"
-HOMEPAGE="http://www.pcsx2.net"
-EGIT_REPO_URI=(
-	"https://github.com/PCSX2/pcsx2.git"
-	"git://github.com/PCSX2/pcsx2.git"
-)
+HOMEPAGE="https://www.pcsx2.net"
+EGIT_REPO_URI="https://github.com/PCSX2/${PN}.git"
 
 LICENSE="GPL-3"
 SLOT="0"
@@ -25,7 +21,7 @@ RDEPEND="
 	dev-libs/libaio[abi_x86_32(-)]
 	media-libs/alsa-lib[abi_x86_32(-)]
 	media-libs/libpng:=[abi_x86_32(-)]
-	media-libs/libsdl2[abi_x86_32(-),joystick,sound]
+	media-libs/libsdl2[abi_x86_32(-),haptic,joystick,sound]
 	media-libs/libsoundtouch[abi_x86_32(-)]
 	media-libs/portaudio[abi_x86_32(-)]
 	>=sys-libs/zlib-1.2.4[abi_x86_32(-)]
@@ -100,7 +96,7 @@ src_configure() {
 
 src_install() {
 	# Upstream issue: https://github.com/PCSX2/pcsx2/issues/417
-	#QA_TEXTRELS="usr/$(get_libdir)/pcsx2/*"
+	QA_TEXTRELS="usr/$(get_libdir)/pcsx2/*"
 
 	cmake-utils_src_install
 }
