@@ -6,6 +6,6 @@ GenericName=Minecraft launcher
 Comment=Greatly enhanced game launcher for Minecraft
 Type=Application
 Terminal=false
-Exec=multimc5
+Exec=multimc
 Icon=multimc5
 Categories=Game
