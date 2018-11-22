@@ -10,7 +10,7 @@ diff -ru citra_orig/CMakeLists.txt citra/CMakeLists.txt
  # Set bundled sdl2/qt as dependent options.
  # OFF by default, but if ENABLE_SDL2 and MSVC are true then ON
  
-@@ -184,13 +186,12 @@
+@@ -184,14 +186,13 @@
  # System imported libraries
  # ======================
  
@@ -19,12 +19,14 @@ diff -ru citra_orig/CMakeLists.txt citra/CMakeLists.txt
 -    message(STATUS "Boost 1.66.0 or newer not found, falling back to externals")
 -
 -    set(BOOST_ROOT "${PROJECT_SOURCE_DIR}/externals/boost")
+-    set(Boost_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/externals/boost")
 -    set(Boost_NO_SYSTEM_PATHS OFF)
 -    find_package(Boost QUIET REQUIRED)
 +if (USE_SYSTEM_BOOST)
 +	find_package(Boost 1.66.0 QUIET REQUIRED)
 +else()
 +	set(BOOST_ROOT "${CMAKE_SOURCE_DIR}/externals/boost")
++	set(Boost_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/externals/boost")
 +	set(Boost_NO_SYSTEM_PATHS OFF)
 +	find_package(Boost QUIET REQUIRED)
  endif()
