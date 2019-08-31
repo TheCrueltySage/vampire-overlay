@@ -4,10 +4,11 @@
 	<use>
 		<flag name="clang">Use sys-devel/clang to compile citra</flag>
 		<flag name="system-boost">Use the system-wide version of dev-libs/boost</flag>
+		<flag name="system-libressl">Use the system-wide version of dev-libs/libressl</flag>
 		<flag name="sdl2">Enable the SDL2 based interface</flag>
 		<flag name="qt5">Enable the Qt5 based interface</flag>
 		<flag name="i18n">Enable UI translations (Qt5 interface only)</flag>
-		<flag name="telemetry">Allow transmitting anonymous usage data to the citra developers</flag>
+		<flag name="web">Allow web services, including multiplayer and telemetry option (transmitting anonymous usage data to the citra developers)</flag>
 		<flag name="scripting">Enable support for scripting languages</flag>
 	</use>
 </pkgmetadata>
