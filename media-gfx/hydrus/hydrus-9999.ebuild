@@ -1,15 +1,15 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-EAPI=5
+EAPI=7
 
-PYTHON_COMPAT=( python2_7 )
+PYTHON_COMPAT=( python{3_5,3_6,3_7} )
 
 inherit git-r3 eutils python-single-r1
 
 DESCRIPTION="*booru style image collector and viewer"
 HOMEPAGE="http://hydrusnetwork.github.io/hydrus/ https://github.com/hydrusnetwork/hydrus"
 EGIT_REPO_URI="https://github.com/hydrusnetwork/hydrus.git"
-IUSE="+ffmpeg"
+IUSE="+ffmpeg miniupnpc +lz4 socks matplotlib"
 
 LICENSE="WTFPL"
 SLOT="0"
@@ -17,29 +17,33 @@ KEYWORDS=""
 
 RDEPEND="
 	media-libs/opencv[python,${PYTHON_USEDEP}]
-	dev-python/pafy[${PYTHON_USEDEP}]
-	dev-python/flvlib[${PYTHON_USEDEP}]
-	dev-python/hsaudiotag[${PYTHON_USEDEP}]
 
+	dev-python/wxpython:4.0[${PYTHON_USEDEP}]
+	dev-python/beautifulsoup:4[${PYTHON_USEDEP}]
 	dev-python/twisted[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
-	dev-python/PyPDF2[${PYTHON_USEDEP}]
-	dev-python/beautifulsoup[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/lz4[${PYTHON_USEDEP}]
 	dev-python/lxml[${PYTHON_USEDEP}]
 	dev-python/pillow[${PYTHON_USEDEP}]
-	dev-python/potr[${PYTHON_USEDEP}]
-	dev-python/pycrypto[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
-	dev-python/PySocks[${PYTHON_USEDEP}]
-	dev-python/wxpython:3.0[${PYTHON_USEDEP}]
 	dev-python/psutil[${PYTHON_USEDEP}]
 	dev-python/send2trash[${PYTHON_USEDEP}]
+	dev-python/chardet[${PYTHON_USEDEP}]
+	dev-python/html5lib[${PYTHON_USEDEP}]
+	dev-python/nose[${PYTHON_USEDEP}]
+	dev-python/six[${PYTHON_USEDEP}]
 
 	sys-apps/coreutils
+	x11-libs/gtkglext
 
 	ffmpeg? ( virtual/ffmpeg )
+	miniupnpc? ( net-libs/miniupnpc )
+	lz4? ( dev-python/lz4[${PYTHON_USEDEP}] )
+	socks? (
+			|| ( dev-python/requests[socks5,${PYTHON_USEDEP}]
+				dev-python/PySocks[${PYTHON_USEDEP}] )
+	)
+	matplotlib? ( dev-python/matplotlib[${PYTHON_USEDEP}] )
 	${PYTHON_DEPS}"
 
 DEPEND="${RDEPEND}"
@@ -47,22 +51,23 @@ DEPEND="${RDEPEND}"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 src_prepare() {
-	epatch "${FILESDIR}/paths-in-opt.patch"
+	eapply "${FILESDIR}/paths-in-opt.patch"
 
-	epatch_user
+	eapply_user
 
 	# remove useless directories and files due to paths-in-opt.patch
 	rm Readme.txt
 	rm -r db/
-	
+
 	chmod a-x include/*.py
 	rm -f "include/pyconfig.h"
 	rm -f "include/Test"*.py
+	rm -f "test.py"
 	rm -rf "static/testing"
 }
 
 src_compile() {
-	python2 -OO -m compileall -f .
+	python3 -OO -m compileall -f .
 }
 
 src_install() {
@@ -71,10 +76,11 @@ src_install() {
 	elog "${DOC}/html/index.html"
 	elog "or accessed through the hydrus help menu."
 
-	dodoc COPYING README.md
-	rm COPYING README.md
+	DOCS="COPYING README.md"
+	HTML_DOCS="${S}/help/"
+	einstalldocs
 
-	dohtml -r help/
+	rm COPYING README.md
 	rm -r help/
 	ln -s "${DOC}/html" help
 

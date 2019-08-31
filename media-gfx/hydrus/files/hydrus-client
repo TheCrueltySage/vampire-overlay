@@ -1,2 +1,2 @@
 #!/bin/sh
-/usr/bin/env python2 -OO /opt/hydrus/client.pyw "$@"
+/usr/bin/env python3 -OO /opt/hydrus/client.pyw "$@"

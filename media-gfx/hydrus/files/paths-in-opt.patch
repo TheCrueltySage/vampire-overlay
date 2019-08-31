@@ -74,7 +74,7 @@ index 7b45015..47fc32c 100755
 +USERPATH_DB_DIR = DEFAULT_DB_DIR
  
 -LICENSE_PATH = os.path.join( BASE_DIR, 'license.txt' )
-+LICENSE_PATH = "/usr/share/licenses/hydrus/license.txt"
++LICENSE_PATH = "/opt/hydrus/license.txt"
  
  #
  
