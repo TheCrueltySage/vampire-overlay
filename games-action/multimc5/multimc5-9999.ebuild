@@ -26,6 +26,7 @@ COMMON_DEPEND="
 DEPEND="${COMMON_DEPEND}
 		virtual/jdk"
 RDEPEND="${COMMON_DEPEND}
+		x11-apps/xrandr
 		sys-libs/zlib
 		virtual/jre
 		virtual/opengl"
