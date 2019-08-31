@@ -71,7 +71,6 @@ src_configure() {
 	fi
 
 	local mycmakeargs=(
-		-DARCH_FLAG=
 		-DDISABLE_BUILD_DATE=TRUE
 		-DDISABLE_PCSX2_WRAPPER=TRUE
 		-DEXTRA_PLUGINS=FALSE
