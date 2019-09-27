@@ -1,66 +1,72 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=6
-inherit gnome2-utils cmake-utils git-r3
+EAPI=7
+inherit cmake-utils xdg-utils readme.gentoo-r1 git-r3
 
 DESCRIPTION="An open source reimplementation of TES III: Morrowind"
 HOMEPAGE="http://openmw.org/"
 #SRC_URI="https://github.com/OpenMW/openmw/archive/${P%_*}.tar.gz"
-EGIT_REPO_URI="http://github.com/OpenMW/openmw.git https://github.com/OpenMW/openmw.git"
+EGIT_REPO_URI="https://github.com/OpenMW/openmw.git"
 
 LICENSE="GPL-3 MIT BitstreamVera ZLIB"
 SLOT="0"
 #KEYWORDS="~amd64 ~x86"
 IUSE="doc devtools +qt5"
 
-# 0.37.0: >=media-video/ffmpeg-0.9 is required for swresample
 RDEPEND="
-	>=dev-games/openscenegraph-3.3.4[ffmpeg,jpeg,png,sdl,svg,truetype,zlib]
-	|| ( media-libs/libtxc_dxtn x11-drivers/ati-drivers x11-drivers/nvidia-drivers )
-	>=dev-games/mygui-3.2.2
-	>=dev-libs/boost-1.56.0-r1[threads]
+	dev-games/mygui
+	>=dev-games/openscenegraph-3.5.5:=[ffmpeg,jpeg,png,sdl,svg,truetype,zlib]
+	dev-libs/boost:=[threads]
 	dev-libs/tinyxml[stl]
-	media-libs/libsdl2[joystick,opengl,X,video]
+	media-libs/libsdl2[joystick,opengl,video]
 	media-libs/openal
-	>=sci-physics/bullet-2.83
-	>=media-video/ffmpeg-0.9
+	media-video/ffmpeg:=
+	>=sci-physics/bullet-2.86:=
 	virtual/opengl
-	qt5? ( app-arch/unshield
-		dev-qt/qtcore:5
-		dev-qt/qtnetwork:5
-		dev-qt/qtopengl:5
-		dev-qt/qtwidgets:5 )"
-DEPEND="${RDEPEND}
-	virtual/pkgconfig
-	doc? ( app-doc/doxygen
-		dev-python/sphinx
-		media-gfx/graphviz )"
+	qt5? (
+		app-arch/unshield
+		dev-qt/qtcore:5=
+		dev-qt/qtgui:5=
+		dev-qt/qtnetwork:5=
+		dev-qt/qtopengl:5=
+		dev-qt/qtwidgets:5=
+	)
+"
 
-#S=${WORKDIR}/${PN}-${P}
+DEPEND="${RDEPEND}"
+
+BDEPEND="
+	virtual/pkgconfig
+	doc? (
+		app-doc/doxygen[doc]
+		dev-python/sphinx
+	)
+"
+
+#S="${WORKDIR}/${PN}-${P}"
 
 src_prepare() {
-	default
+	cmake-utils_src_prepare
 
 	# We don't install license files
-	sed -e '/LICDIR/d' \
-		-i CMakeLists.txt || die
+	sed -i '/LICDIR/d' CMakeLists.txt || die
+
 	# Use the system tinyxml headers
-	sed -e 's/"tinyxml.h"/<tinyxml.h>/g' \
-		-e 's/"tinystr.h"/<tinystr.h>/g' \
-		-i extern/oics/ICSPrerequisites.h || die
+	rm -v extern/oics/tiny{str,xml}* || die
 }
 
 src_configure() {
-	use devtools && ! use qt5 && elog "'qt5' USE flag is disabled, 'openmw-cs' will not be installed"
+	use devtools && ! use qt5 && \
+		elog "'qt5' USE flag is disabled, 'openmw-cs' will not be installed"
 
 	local mycmakeargs=(
 		-DBUILD_BSATOOL=$(usex devtools)
+		-DBUILD_DOCS=$(usex doc)
 		-DBUILD_ESMTOOL=$(usex devtools)
-		-DBUILD_OPENCS=$(usex devtools $(usex qt5))
-		-DBUILD_NIFTEST=$(usex devtools)
 		-DBUILD_LAUNCHER=$(usex qt5)
+		-DBUILD_NIFTEST=$(usex devtools)
+		-DBUILD_OPENCS=$(usex devtools $(usex qt5))
 		-DBUILD_WIZARD=$(usex qt5)
 		-DBUILD_UNITTESTS=OFF
 		-DGLOBAL_DATA_PATH=/usr/share
@@ -77,52 +83,44 @@ src_compile() {
 	cmake-utils_src_compile
 
 	if use doc ; then
-		emake -C "${CMAKE_BUILD_DIR}" doc
+		cmake-utils_src_compile doc
 		find "${CMAKE_BUILD_DIR}"/docs/Doxygen/html \
 			-name '*.md5' -type f -delete || die
+		HTML_DOCS=( "${CMAKE_BUILD_DIR}"/docs/Doxygen/html/. )
 	fi
 }
 
 src_install() {
 	cmake-utils_src_install
 
-	# about 43k files, dodoc seems to have trouble
-	if use doc ; then
-		dodir "/usr/share/doc/${PF}"
-		mv "${CMAKE_BUILD_DIR}"/docs/Doxygen/html \
-			"${D}/usr/share/doc/${PF}/" || die
-	fi
-}
+	local DOC_CONTENTS="
+	You need the original Morrowind data files. If you haven't
+	installed them yet, you can install them straight via the
+	installation wizard which is the officially supported method
+	(either by using the launcher or by calling 'openmw-wizard'
+	directly).\n"
 
-pkg_preinst() {
-	gnome2_icon_savelist
+	if ! use qt5; then
+		local DOC_CONTENTS+="\n\n
+		USE flag 'qt5' is disabled, 'openmw-launcher' and
+		'openmw-wizard' are not available. You are on your own for
+		making the Morrowind data files available and pointing
+		openmw at them.\n\n
+		Additionally; you must import the Morrowind.ini file before
+		running openmw with the Morrowind data files for the first
+		time. Typically this can be done like so:\n\n
+		\t mkdir -p ~/.config/openmw\n
+		\t openmw-iniimporter /path/to/Morrowind.ini ~/.config/openmw/openmw.cfg"
+	fi
+
+	readme.gentoo_create_doc
 }
 
 pkg_postinst() {
-	gnome2_icon_cache_update
-
-	elog "You need the original Morrowind data files. If you haven't"
-	elog "installed them yet, you can install them straight via the"
-	elog "installation wizard which is the officially"
-	elog "supported method (either by using the launcher or by calling"
-	elog "'openmw-wizard' directly)."
-
-	if ! use qt5; then
-		elog
-		elog "'qt5' USE flag is disabled, 'openmw-launcher' and"
-		elog "'openmw-wizard' are not available. You are on your own for"
-		elog "making the Morrowind data files available and pointing"
-		elog "openmw at them."
-		elog
-		elog "Additionally; you must import the Morrowind.ini file before"
-		elog "running openmw with the Morrowind data files for the first"
-		elog "time. Typically this can be done like so:"
-		elog
-		elog "    mkdir -p ~/.config/openmw"
-		elog "    openmw-iniimporter /path/to/Morrowind.ini ~/.config/openmw/openmw.cfg"
-	fi
+	xdg_icon_cache_update
+	readme.gentoo_print_elog
 }
 
 pkg_postrm() {
-	gnome2_icon_cache_update
+	xdg_icon_cache_update
 }
