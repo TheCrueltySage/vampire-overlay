@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo AUthors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=5
@@ -82,8 +82,8 @@ src_install() {
 		doman man/chocolate-server.6
 	fi
 
-	domenu src/${PN}-screensaver.desktop
-	#dodoc AUTHORS ChangeLog HACKING NEWS NOT-BUGS README* TODO
+	domenu src/Doom_Screensaver.desktop
+	dodoc AUTHORS ChangeLog HACKING.md NEWS.md NOT-BUGS.md README* TODO.md
 
 	keepdir "${GAMES_DATADIR}/doom-data"
 
