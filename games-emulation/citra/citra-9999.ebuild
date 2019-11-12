@@ -54,6 +54,7 @@ RDEPEND="virtual/opengl
 		dev-qt/qtgui:5
 		dev-qt/qtopengl:5
 		dev-qt/qtwidgets:5
+		dev-qt/qtmultimedia:5
 		i18n? ( dev-qt/linguist-tools )
 	)"
 DEPEND="${DEPEND}
