@@ -1,8 +1,7 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=5
+EAPI=6
 PLOCALES="ar_SA ay_WI be_BY be_BY@latin bg_BG cs_CZ de_DE fa_IR fr_FR el_GR es_AR es_BO es_ES it_IT ko_KR ja_JP lt_LT mk_MK nl_NL pl_PL pt_BR qu_WI ru_RU sk_SK sq_AL sr_SR sv_SE tg_TJ tk_TM tr_TR uk_UA vi_VN zh_CN zh_TW"
 
 inherit l10n eutils qmake-utils git-r3
@@ -46,16 +45,13 @@ PATCHES=(
 )
 
 src_prepare() {
-	epatch_user
+	eapply_user
 	l10n_for_each_disabled_locale_do editpro
 	# don't install duplicated stuff and fix installation path
 	sed -i \
 		-e '/desktops2/d' \
 		-e '/icons2/d' \
 		${PN}.pro || die
-
-	# add trailing semicolon
-	sed -i -e '/^Categories/s/$/;/' redist/${PN}.desktop || die
 }
 
 src_configure() {
