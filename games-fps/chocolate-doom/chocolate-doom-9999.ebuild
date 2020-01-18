@@ -3,7 +3,7 @@
 
 EAPI=5
 
-PYTHON_COMPAT=( python3_{4,5,6} pypy2_0 )
+PYTHON_COMPAT=( python3_{5,6,7,8} pypy2_0 )
 EGIT_REPO_URI="https://github.com/chocolate-doom/chocolate-doom.git"
 AT_M4DIR="man"
 
