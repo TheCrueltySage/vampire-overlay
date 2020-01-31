@@ -1,8 +1,8 @@
 diff --git a/include/ClientGUI.py b/include/ClientGUI.py
-index 1d39c4f..e506341 100755
+index b6913b2..e23ef1b 100755
 --- a/include/ClientGUI.py
 +++ b/include/ClientGUI.py
-@@ -397,7 +397,7 @@ class FrameGUI( ClientGUITopLevelWindows.FrameThatResizes ):
+@@ -738,7 +738,7 @@ class FrameGUI( ClientGUITopLevelWindows.MainFrameThatResizes ):
                              python_executable = python_executable.replace( 'pythonw', 'python' )
                              
                          
@@ -12,10 +12,10 @@ index 1d39c4f..e506341 100755
                          cmd = [ python_executable, server_script_path, db_param ]
                          
 diff --git a/include/HydrusConstants.py b/include/HydrusConstants.py
-index 7b45015..47fc32c 100755
+index 3969396..bd6651a 100755
 --- a/include/HydrusConstants.py
 +++ b/include/HydrusConstants.py
-@@ -2,30 +2,9 @@ import os
+@@ -2,33 +2,9 @@ import os
  import sys
  
  # dirs
@@ -36,6 +36,9 @@ index 7b45015..47fc32c 100755
 -    
 -else:
 -    
+-    # maybe this is better?
+-    # os.path.dirname( __file__ )
+-    
 -    RUNNING_FROM_FROZEN_BUILD = False
 -    
 -    BASE_DIR = sys.path[0]
@@ -47,10 +50,10 @@ index 7b45015..47fc32c 100755
 +BASE_DIR = os.path.expanduser("~/.local/share/hydrus")
  
  PLATFORM_WINDOWS = False
- PLATFORM_OSX  = False
-@@ -38,23 +17,16 @@ elif sys.platform == 'linux': PLATFORM_LINUX = True
+ PLATFORM_MACOS  = False
+@@ -41,23 +17,16 @@ elif sys.platform == 'linux': PLATFORM_LINUX = True
  RUNNING_FROM_SOURCE = sys.argv[0].endswith( '.py' ) or sys.argv[0].endswith( '.pyw' )
- RUNNING_FROM_OSX_APP = os.path.exists( os.path.join( BASE_DIR, 'running_from_app' ) )
+ RUNNING_FROM_MACOS_APP = os.path.exists( os.path.join( BASE_DIR, 'running_from_app' ) )
  
 -BIN_DIR = os.path.join( BASE_DIR, 'bin' )
 -HELP_DIR = os.path.join( BASE_DIR, 'help' )
@@ -63,7 +66,7 @@ index 7b45015..47fc32c 100755
  
  DEFAULT_DB_DIR = os.path.join( BASE_DIR, 'db' )
  
--if PLATFORM_OSX:
+-if PLATFORM_MACOS:
 -    
 -    USERPATH_DB_DIR = os.path.join( os.path.expanduser( '~' ), 'Library', 'Hydrus' )
 -    
@@ -74,7 +77,7 @@ index 7b45015..47fc32c 100755
 +USERPATH_DB_DIR = DEFAULT_DB_DIR
  
 -LICENSE_PATH = os.path.join( BASE_DIR, 'license.txt' )
-+LICENSE_PATH = "/opt/hydrus/license.txt"
++LICENSE_PATH = "/usr/share/licenses/hydrus/license.txt"
  
  #
  
