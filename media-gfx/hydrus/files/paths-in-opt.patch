@@ -1,8 +1,18 @@
+From 304d387a36c2a470f68bcf4e8acb2c0f629c6195 Mon Sep 17 00:00:00 2001
+From: Kyle Devir <kyle.devir@mykolab.com>
+Date: Thu, 19 Mar 2020 14:29:03 +1000
+Subject: [PATCH] Custom paths for system install on Arch Linux
+
+---
+ include/ClientGUI.py       |  2 +-
+ include/HydrusConstants.py | 45 +++++++-------------------------------
+ 2 files changed, 9 insertions(+), 38 deletions(-)
+
 diff --git a/include/ClientGUI.py b/include/ClientGUI.py
-index b6913b2..e23ef1b 100755
+index 87a1213..ce62212 100755
 --- a/include/ClientGUI.py
 +++ b/include/ClientGUI.py
-@@ -738,7 +738,7 @@ class FrameGUI( ClientGUITopLevelWindows.MainFrameThatResizes ):
+@@ -740,7 +740,7 @@ class FrameGUI( ClientGUITopLevelWindows.MainFrameThatResizes ):
                              python_executable = python_executable.replace( 'pythonw', 'python' )
                              
                          
@@ -12,36 +22,34 @@ index b6913b2..e23ef1b 100755
                          cmd = [ python_executable, server_script_path, db_param ]
                          
 diff --git a/include/HydrusConstants.py b/include/HydrusConstants.py
-index 3969396..bd6651a 100755
+index 5b0aa75..7412eaf 100755
 --- a/include/HydrusConstants.py
 +++ b/include/HydrusConstants.py
-@@ -2,33 +2,9 @@ import os
- import sys
+@@ -4,31 +4,9 @@ import sys
+ # old method of getting frozen dir, doesn't work for symlinks looks like:
+ # BASE_DIR = getattr( sys, '_MEIPASS', None )
  
- # dirs
+-RUNNING_FROM_FROZEN_BUILD = getattr( sys, 'frozen', False )
 +RUNNING_FROM_FROZEN_BUILD = False
  
--if getattr( sys, 'frozen', False ):
+-if RUNNING_FROM_FROZEN_BUILD:
 -    
--    RUNNING_FROM_FROZEN_BUILD = True
+-    real_exe_path = os.path.realpath( sys.executable )
 -    
--    # we are in a pyinstaller frozen app
--    
--    BASE_DIR = getattr( sys, '_MEIPASS', None )
--    
--    if BASE_DIR is None:
--        
--        raise Exception( 'It seems this hydrus is running from a frozen bundle, but there was no _MEIPASS variable under sys to define the bundle directory.' )
--        
+-    BASE_DIR = os.path.dirname( real_exe_path )
 -    
 -else:
 -    
--    # maybe this is better?
--    # os.path.dirname( __file__ )
--    
--    RUNNING_FROM_FROZEN_BUILD = False
--    
--    BASE_DIR = sys.path[0]
+-    try:
+-        
+-        hc_realpath_dir = os.path.dirname( os.path.realpath( __file__ ) )
+-        
+-        BASE_DIR = os.path.split( hc_realpath_dir )[0]
+-        
+-    except NameError: # if __file__ is not defined due to some weird OS
+-        
+-        BASE_DIR = os.path.realpath( sys.path[0] )
+-        
 -    
 -    if BASE_DIR == '':
 -        
@@ -51,7 +59,7 @@ index 3969396..bd6651a 100755
  
  PLATFORM_WINDOWS = False
  PLATFORM_MACOS  = False
-@@ -41,23 +17,16 @@ elif sys.platform == 'linux': PLATFORM_LINUX = True
+@@ -41,23 +19,16 @@ elif sys.platform == 'linux': PLATFORM_LINUX = True
  RUNNING_FROM_SOURCE = sys.argv[0].endswith( '.py' ) or sys.argv[0].endswith( '.pyw' )
  RUNNING_FROM_MACOS_APP = os.path.exists( os.path.join( BASE_DIR, 'running_from_app' ) )
  
@@ -81,3 +89,6 @@ index 3969396..bd6651a 100755
  
  #
  
+-- 
+2.25.2
+
