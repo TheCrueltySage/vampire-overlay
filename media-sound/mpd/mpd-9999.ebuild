@@ -1,9 +1,9 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 inherit eutils flag-o-matic linux-info multilib systemd user \
-	meson git-r3
+	meson xdg-utils git-r3
 
 DESCRIPTION="The Music Player Daemon (mpd)"
 HOMEPAGE="http://www.musicpd.org https://github.com/MusicPlayerDaemon/MPD"
@@ -16,7 +16,7 @@ IUSE="adplug +alsa ao audiofile bzip2 cdio +curl debug +eventfd expat faad
 	+fifo +ffmpeg flac fluidsynth gme +icu +id3tag +inotify +ipv6 jack
 	lame mms libav libmpdclient libsamplerate libsoxr +mad mikmod modplug
 	mpg123 musepack +network nfs ogg openal opus oss pipe pulseaudio recorder
-	samba selinux sid +signalfd sndfile soundcloud sqlite systemd tcpd twolame
+	samba selinux sid +signalfd sndfile soundcloud sqlite systemd twolame
 	unicode upnp vorbis wavpack wildmidi zeroconf zip zlib webdav"
 
 OUTPUT_PLUGINS="alsa ao fifo jack network openal oss pipe pulseaudio recorder"
@@ -81,7 +81,6 @@ CDEPEND="!<sys-cluster/mpich2-1.4_rc2
 	soundcloud? ( >=dev-libs/yajl-2:= )
 	sqlite? ( dev-db/sqlite:3 )
 	systemd? ( sys-apps/systemd )
-	tcpd? ( sys-apps/tcp-wrappers )
 	twolame? ( media-sound/twolame )
 	upnp? ( net-libs/libupnp:= )
 	vorbis? ( media-libs/libvorbis )
@@ -135,7 +134,6 @@ src_prepare() {
 src_configure() {
 	local emesonargs=(
 		-Ddatabase=true
-		-Droar=disabled
 		-Ddocumentation=false
 		-Ddsd=true
 		-Dshine=disabled
@@ -200,7 +198,6 @@ src_configure() {
 		$(meson_enable cdio iso9660)
 		$(meson_enable jack)
 		$(meson_enable soundcloud)
-		$(meson_enable tcpd libwrap)
 		$(meson_enable libsamplerate)
 		$(meson_enable libsoxr soxr)
 		$(meson_enable mad)
@@ -230,7 +227,6 @@ src_configure() {
 		-Dsystemd_system_unit_dir=$(systemd_get_systemunitdir)
 		-Dsystemd_user_unit_dir=$(systemd_get_userunitdir)
 	)
-
 	meson_src_configure
 }
 
@@ -265,4 +261,12 @@ src_install() {
 	keepdir /var/lib/mpd/music
 	dodir /var/lib/mpd/playlists
 	keepdir /var/lib/mpd/playlists
+}
+
+pkg_postinst() {
+	xdg_icon_cache_update
+}
+
+pkg_postrm() {
+	xdg_icon_cache_update
 }
