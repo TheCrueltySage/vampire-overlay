@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>miltenfiremage@gmail.com</email>
+    <name>Yevgeniy Baklanov</name>
+  </maintainer>
+  <use>
+	<flag name="libglvnd">Use libglvnd for dispatch.</flag>
+  </use>
+</pkgmetadata>

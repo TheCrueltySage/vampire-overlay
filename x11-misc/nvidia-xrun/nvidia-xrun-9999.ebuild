@@ -1,6 +1,5 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 
@@ -13,27 +12,31 @@ EGIT_REPO_URI="https://github.com/Witko/nvidia-xrun.git"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS=""
-IUSE=""
+IUSE="glvnd"
 
 RDEPEND="
 		media-libs/mesa
-		sys-power/bbswitch
 		x11-apps/xinit
-		x11-base/xorg-server[xorg]
-		x11-drivers/nvidia-drivers[X,driver]
+		x11-base/xorg-server[xorg,glvnd?]
+		x11-drivers/nvidia-drivers[X,driver,glvnd?]
 		x11-libs/libXrandr"
 
 src_prepare() {
-		sed -in -e "/\/nvidia\/xorg\/modules/d" -e "s/\/nvidia/\/opengl\/nvidia/g" nvidia-xorg.conf
-		sed -in -e "s/\/nvidia/\/opengl\/nvidia\/lib/g" nvidia-xinitrc
-		eapply_user
+	if use glvnd ; then
+		sed -in -e "/\/nvidia\/xorg/d" -e "s/\/nvidia/\/extensions\/nvidia/g" nvidia-xorg.conf
+	else
+		sed -in -e "/\/nvidia\/xorg/d" -e "s/\/nvidia/\/opengl\/nvidia/g" nvidia-xorg.conf
+		sed -in -e "s/\/nvidia\//\/opengl\/nvidia\/lib\//g" nvidia-xinitrc
+	fi
+	eapply_user
 }
 
 src_install() {
-		dobin nvidia-xrun
-		insinto /etc/X11
-		doins nvidia-xorg.conf
-		insinto /etc/X11/xinit
-		doins nvidia-xinitrc
-
+	dobin nvidia-xrun
+	insinto /etc/X11
+	doins nvidia-xorg.conf
+	insinto /etc/X11/xinit
+	doins nvidia-xinitrc
+	insinto /etc/default
+	doins config/nvidia-xrun
 }
