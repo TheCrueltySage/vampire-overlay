@@ -15,11 +15,11 @@ KEYWORDS=""
 IUSE="glvnd"
 
 RDEPEND="
-		media-libs/mesa
-		x11-apps/xinit
-		x11-base/xorg-server[xorg,glvnd?]
-		x11-drivers/nvidia-drivers[X,driver,glvnd?]
-		x11-libs/libXrandr"
+	media-libs/mesa
+	x11-apps/xinit
+	x11-base/xorg-server[xorg,glvnd?]
+	x11-drivers/nvidia-drivers[X,driver,glvnd?]
+	x11-libs/libXrandr"
 
 src_prepare() {
 	if use glvnd ; then
