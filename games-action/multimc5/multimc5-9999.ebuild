@@ -31,10 +31,6 @@ RDEPEND="${COMMON_DEPEND}
 		virtual/jre
 		virtual/opengl"
 
-PATCHES=(
-		"${FILESDIR}/fortify-fix.patch"
-)
-
 src_prepare() {
 	git submodule update --init
 	cmake-utils_src_prepare
