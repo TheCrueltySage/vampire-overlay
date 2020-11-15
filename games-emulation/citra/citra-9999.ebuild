@@ -67,9 +67,6 @@ DEPEND="${DEPEND}
 	)"
 
 src_prepare() {
-	sed -i \
-		-e "s:\(Boost\ 1.*.0\ QUIET\ REQUIRED\):\1 COMPONENTS serialization:" \
-		CMakeLists.txt || die "sed failed"
 	cmake-utils_src_prepare
 }
 
@@ -80,6 +77,7 @@ src_configure() {
 		append-cxxflags "-stdlib=libc++" # Upstream requires libcxx when building with clang
 	fi
 
+	append-cxxflags "-DFMT_USE_USER_DEFINED_LITERALS=0"
 	local mycmakeargs=(
 		-DENABLE_QT="$(usex qt5)"
 		-DENABLE_SDL2="$(usex sdl2)"
@@ -90,7 +88,6 @@ src_configure() {
 		-DUSE_SYSTEM_BOOST="$(usex system-boost)"
 		-DENABLE_WEB_SERVICE=$(usex web)
 	)
-	append-cxxflags "-fno-new-ttp-matching"
 	cmake-utils_src_configure
 }
 

@@ -1,10 +1,9 @@
-# Copyright 1999-2010 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/games-emulation/desmume/desmume-0.9.5.ebuild,v 1.3 2010/03/04 00:43:55 nyhm Exp $
 
-EAPI="5"
+EAPI="6"
 
-inherit git-r3 eutils autotools flag-o-matic
+inherit git-r3 eutils meson flag-o-matic
 
 DESCRIPTION="Nintendo DS emulator"
 HOMEPAGE="http://desmume.org/"
@@ -13,7 +12,7 @@ EGIT_REPO_URI="https://github.com/TASVideos/desmume.git"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS=""
-IUSE="openal gtk glade osmesa wifi"
+IUSE="openal gtk glade wifi"
 
 DEPEND="virtual/opengl
 	sys-libs/zlib
@@ -27,7 +26,6 @@ DEPEND="virtual/opengl
 		x11-libs/gtkglext )
 	glade? ( gnome-base/libglade
 		x11-libs/gtkglext )
-	osmesa? ( media-libs/mesa[osmesa] )
 	wifi? ( net-libs/libpcap )"
 RDEPEND="${DEPEND}"
 
@@ -43,27 +41,46 @@ src_prepare() {
 		einfo "it may be useful to enable gtk support after all"
 	fi
 
-	eautoreconf
-
 	append-cppflags -std=gnu++0x
 
 	default
 }
 
 src_configure() {
-	econf --datadir=/usr/share \
-		$(use_enable openal) \
-		$(use_enable osmesa) \
-		$(use_enable wifi) \
-		|| die "econf failed"
+	local emesonargs=(
+		$(meson_use openal)
+		$(meson_use wifi)
+		$(meson_use glade frontend-glade)
+		$(meson_use gtk frontend-gtk)
+	)
+	meson_src_configure
+}
+
+src_compile() {
+	meson_src_compile
+}
+
+src_test() {
+	meson_src_test
 }
 
 src_install() {
-	emake DESTDIR="${D}" install || die "emake failed"
+	meson_src_install
+
 	if ! use gtk; then
 		[ -f "${D}/bin/desmume" ] && rm "${D}/bin/desmume"
 	fi
 	if ! use glade; then
 		[ -f "${D}/bin/desmume-glade" ] && rm "${D}/bin/desmume-glade"
 	fi
+}
+
+pkg_postinst() {
+	xdg_desktop_database_update
+	xdg_icon_cache_update
+}
+
+pkg_postrm() {
+	xdg_desktop_database_update
+	xdg_icon_cache_update
 }
