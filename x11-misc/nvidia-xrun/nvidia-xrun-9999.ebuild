@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Foundation
+# Copyright 1999-2021 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -17,7 +17,7 @@ IUSE="glvnd"
 RDEPEND="
 	media-libs/mesa
 	x11-apps/xinit
-	x11-base/xorg-server[xorg,glvnd?]
+	x11-base/xorg-server[xorg]
 	x11-drivers/nvidia-drivers[X,driver]
 	x11-libs/libXrandr"
 
